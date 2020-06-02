@@ -1,9 +1,62 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-books = pd.read_csv('BX-Books.csv', sep=';', error_bad_lines=False, encoding="latin-1")
-books.columns = ['ISBN', 'bookTitle', 'bookAuthor', 'yearOfPublication', 'publisher', 'imageUrlS', 'imageUrlM', 'imageUrlL']
-users = pd.read_csv('BX-Users.csv', sep=';', error_bad_lines=False, encoding="latin-1")
-users.columns = ['userID', 'Location', 'Age']
-ratings = pd.read_csv('BX-Book-Ratings.csv', sep=';', error_bad_lines=False, encoding="latin-1")
-ratings.columns = ['userID', 'ISBN', 'bookRating']
+books=pd.read_csv('books.csv'sep=';',error_bad_lines=False,encoding="latin-1")
+books.columns=['ISBN','bookTitle','bookAuthor','yearofPublication','publisher','imageUrlS','imageUrlM','imageUrlL']
+users=pd.read_csv('users.csv',sep=';',error_bad_lines=False,encoding="latin-1")
+users.columns=['userID','Location','Age']
+ratings=pd.read_csv('rating_csv',sep=';',error_bad_lines=False,encoding="latin-1")
+ratings.columns=['userID','ISBN','bookRating']
+print books.shape
+print users.shape
+print ratings.shape
+#books#
+books.head()
+books.drop([imageUrlS','imageUrlM','imageUrlL'],axis=1,inplace=True)
+books.head()
+#books.dtypes
+ISBN                          object
+bookTitle                     object
+bookAuthor                    object
+yearofPublication             object
+publisher                     object
+dtype:      object#
+pd.set_option('display.max_colwidth', -1)
+#year of publications#
+books.yearofPublication.unique()
+array([2002L,2001L,1991L,1999L,2000L,1993L,1996L,1988L,2004L,1998L,1994L,2003L,1997L,1983L,1979L,1995L,1982L,1985L,1992L,1986L,1978L,1980L,1952L,1987L,1990L,1989L,1975L,1974L,1973L,1972L,1971L,1933L,1934L,1935L,1947L,1977L,1900L,1967L,1954L,1922L,1923L,1924L,1925L,1926L,1927L,1928L,1929L,u'2000',u'2001',u'2003',u'2004',u'2005',u'2006',u'2007',u'2008',u'2009',u'2010',u'2011',u'2012',u'2013',u'2014',u'2015',u'2016',u'2017'],dtype=object)
+#publisher#
+books.loc[books.publisher.isnull().:]
+books.loc[(books.ISBN == '193169656X'),'publisher']='other'
+books.loc[(books.ISBN == '1931696993'),'publisher']='other'
+#users Dataset
+print users.shape
+users.head()
+users.userID.values
+array([1,2,3,.......278856,278857,278858],dtype=int64)
+print sorted(users.Age.unique())
+users.loc[(users.Age>90)[(users.Age<5),'Age']
+users.Age=users.Age.fillna(users.Age.mean())
+users.Age=users.Age.astype(np.int32)
+print sorted(users.Age.unique())
+#rating dataset#
+ratings.shape
+n_users=users.shape[0]
+n_books=books.shape[0]
+print n_users*n_books
+ratings.head(5)
+ratings_new=ratings[ratings.ISBN.isin(books.ISBN)]
+ratings_new=ratings_new[ratings_new.userID.isin(users.userID)]
+print ratings.shape
+print ratings_new.shape
+#sparcity#
+sparsity=1.0-len(ratings_new)/float(n_users*n_books)
+print 'The Sparsity level of Book Crossing dataset is + str(sparsity*100)+ '%'
+array([ 0, 5, 3, 6, 8, 7, 10, 9, 4, 1, 2], dtype=int64)
+ratings_explicits = ratings_new[ratings_new.bookRatings != 0]
+ratings_implicit = ratings_new[ratings_new.bookRatings == 0]
+users_exp_ratings = users[users.userID.isin(ratings_explicit.userID)]
+users_imp_ratings = users[users.userID.isin(ratings_implicit.userID)]
+sns.countplot(data=ratings_explicit , x='bookRatings')
+plt.show()
+ratings_count = pd.DataFrame(ratings_explicit.groupby(['ISB'])['bookRAtings'].sum())
+top10 = ratings_count.sort_values('bookRatings', ascending = False).head(10)
+print "Following books are recommended"
+top.merge(books, left_index = True, right_on = 'ISBN')
